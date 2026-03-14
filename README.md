@@ -25,8 +25,8 @@ A web-based SMB/CIFS network share explorer built with Next.js. Browse, upload, 
 ### 1. Clone and install dependencies
 
 ```bash
-git clone <repo-url>
-cd smb-explorer
+git clone https://github.com/vinodkumarpeddi/SMB-Network-Drive-Browser-.git
+cd SMB-Network-Drive-Browser-
 npm install
 ```
 
