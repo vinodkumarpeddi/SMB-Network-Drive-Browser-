@@ -36,7 +36,12 @@ export function isCached(path: string): boolean {
 
 export function downloadFile(path: string) {
   const params = new URLSearchParams({ path });
-  window.open(`/api/smb/download?${params}`, "_blank");
+  const a = document.createElement("a");
+  a.href = `/api/smb/download?${params}`;
+  a.download = path.split("/").pop() || "download";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 export async function downloadZip(paths: string[]) {
@@ -56,7 +61,9 @@ export async function downloadZip(paths: string[]) {
   const a = document.createElement("a");
   a.href = url;
   a.download = "archive.zip";
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
