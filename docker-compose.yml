@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  samba:
+    image: dperson/samba
+    container_name: smb-server
+    ports:
+      - "139:139"
+      - "445:445"
+    command: >
+      -u "user;pass"
+      -s "share;/mount;yes;no;no;user;user;user"
+      -p
+      -g "ntlm auth = ntlmv1-permitted"
+      -g "server min protocol = SMB2"
+      -g "force user = user"
+    healthcheck:
+      test: ["CMD", "smbclient", "-L", "//localhost/share", "-U", "user%pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smb-explorer-app
+    ports:
+      - "3000:3000"
+    environment:
+      - SMB_HOST=samba
+      - SMB_PORT=445
+      - SMB_SHARE=share
+      - SMB_USERNAME=user
+      - SMB_PASSWORD=pass
+      - NODE_OPTIONS=--openssl-legacy-provider
+    depends_on:
+      samba:
+        condition: service_healthy
